@@ -1,0 +1,346 @@
+
+<!-- saved from url=(0085)file:///C:/Users/SnehaS/AppData/Local/Temp/bob-artifacts/metro-corpus-calculator.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metro Lifestyle Expense &amp; Corpus Calculator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.6; background: #f0f2f5; color: #1f2328; }
+  .wrapper { max-width: 820px; margin: 0 auto; padding: 32px 20px 56px; }
+  h1 { font-size: 22px; font-weight: 700; color: #1f2328; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #57606a; margin-bottom: 28px; }
+  .card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 24px; margin-bottom: 20px; }
+  .card h2 { font-size: 13px; font-weight: 700; color: #57606a; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #e5e7eb; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  label { font-size: 11px; font-weight: 700; color: #57606a; text-transform: uppercase; letter-spacing: .04em; }
+  input[type="number"] { width: 100%; padding: 8px 10px; font-size: 14px; border: 1px solid #d0d7de; border-radius: 6px; background: #fafbfc; color: #1f2328; outline: none; }
+  input[type="number"]:focus { border-color: #3b82d4; background: #fff; box-shadow: 0 0 0 3px rgba(59,130,212,.1); }
+  .hint { font-size: 11px; color: #8b949e; }
+  .btn-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .btn { padding: 10px 28px; background: #3b82d4; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .btn-reset { padding: 10px 20px; background: #fff; color: #57606a; border: 1px solid #d0d7de; border-radius: 6px; font-size: 14px; cursor: pointer; }
+  #results { display: none; }
+  .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .metric { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 14px; }
+  .metric-label { font-size: 11px; color: #57606a; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+  .metric-value { font-size: 19px; font-weight: 700; color: #1f2328; }
+  .metric-value.blue { color: #3b82d4; }
+  .metric-value.green { color: #1a7f37; }
+  .metric-value.red { color: #cf222e; }
+  .metric-value.purple { color: #7c5cd8; }
+  .metric-sub { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { background: #f7f8fa; color: #57606a; font-weight: 700; text-align: right; padding: 10px 12px; border-bottom: 2px solid #e5e7eb; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+  thead th:first-child { text-align: left; }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+  tbody tr:last-child td { font-weight: 700; background: #eef4ff; border-top: 2px solid #3b82d4; }
+  tbody td { padding: 9px 12px; border-bottom: 1px solid #e5e7eb; text-align: right; color: #1f2328; white-space: nowrap; }
+  tbody td:first-child { text-align: left; font-weight: 600; }
+  .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .cat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 13px; }
+  .cat-name { color: #57606a; }
+  .cat-5yr { font-weight: 700; color: #cf222e; }
+  .corpus-bar-wrap { background: #e5e7eb; border-radius: 20px; height: 12px; margin: 8px 0 4px; overflow: hidden; }
+  .corpus-bar { height: 100%; background: #3b82d4; border-radius: 20px; }
+  .note { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px; padding: 12px 14px; font-size: 12px; color: #92400e; margin-top: 16px; }
+  .section-title { font-size: 15px; font-weight: 700; color: #1f2328; margin-bottom: 14px; }
+  footer { text-align: center; font-size: 12px; color: #8b949e; border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 40px; }
+  @media (max-width: 580px) { .grid-3, .summary-grid { grid-template-columns: 1fr 1fr; } .cat-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <h1>Metro Lifestyle Expense &amp; Corpus Planner</h1>
+  <p class="subtitle">Enter your current monthly expenses. The calculator projects inflation-adjusted costs over 5 years and tells you the corpus + monthly SIP needed to fund them.</p>
+
+  <div class="card">
+    <h2>Inflation &amp; Return Assumptions</h2>
+    <div class="grid-3">
+      <div class="field">
+        <label>General Inflation (%/yr)</label>
+        <input type="number" id="inflationGeneral">
+        <span class="hint">Metro typically 6–7%</span>
+      </div>
+      <div class="field">
+        <label>Rent Inflation (%/yr)</label>
+        <input type="number" id="inflationRent">
+        <span class="hint">Metro rents rise 8–12%/yr</span>
+      </div>
+      <div class="field">
+        <label>Investment Return (%/yr)</label>
+        <input type="number" id="returnRate">
+        <span class="hint">Equity MF expected return</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Housing &amp; Utilities</h2>
+    <div class="grid-3">
+      <div class="field"><label>Monthly Rent (Rs)</label><input type="number" id="rent"></div>
+      <div class="field"><label>Electricity &amp; Water (Rs)</label><input type="number" id="electricity"></div>
+      <div class="field"><label>Internet + OTT + DTH (Rs)</label><input type="number" id="internet"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Food &amp; Groceries</h2>
+    <div class="grid-3">
+      <div class="field"><label>Groceries (Rs)</label><input type="number" id="groceries"></div>
+      <div class="field"><label>Eating Out / Food Delivery (Rs)</label><input type="number" id="eatout"></div>
+      <div class="field"><label>Household Supplies (Rs)</label><input type="number" id="household"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Transport</h2>
+    <div class="grid-3">
+      <div class="field"><label>Commute / Metro / Cab (Rs)</label><input type="number" id="commute"></div>
+      <div class="field"><label>Vehicle Fuel / Maintenance (Rs)</label><input type="number" id="fuel"></div>
+      <div class="field"><label>Parking / Tolls (Rs)</label><input type="number" id="parking"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Health &amp; Insurance</h2>
+    <div class="grid-3">
+      <div class="field"><label>Health Insurance Premium (Rs)</label><input type="number" id="healthInsurance"></div>
+      <div class="field"><label>Medical / Pharmacy (Rs)</label><input type="number" id="medical"></div>
+      <div class="field"><label>Gym / Wellness (Rs)</label><input type="number" id="gym"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Lifestyle &amp; Personal</h2>
+    <div class="grid-3">
+      <div class="field"><label>Clothing &amp; Accessories (Rs)</label><input type="number" id="clothing"></div>
+      <div class="field"><label>Personal Care / Grooming (Rs)</label><input type="number" id="personalCare"></div>
+      <div class="field"><label>Entertainment / Events (Rs)</label><input type="number" id="entertainment"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Education, EMIs &amp; Travel</h2>
+    <div class="grid-3">
+      <div class="field"><label>School / Tuition Fees (Rs)</label><input type="number" id="education"></div>
+      <div class="field"><label>Loan EMIs (Rs)</label><input type="number" id="emi"><span class="hint">Treated as flat — no inflation</span></div>
+      <div class="field"><label>Travel / Vacation (monthly avg Rs)</label><input type="number" id="travel"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Miscellaneous</h2>
+    <div class="grid-2">
+      <div class="field"><label>Parents / Dependents Support (Rs)</label><input type="number" id="dependents"></div>
+      <div class="field"><label>Miscellaneous / Buffer (Rs)</label><input type="number" id="misc"></div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn" id="calcBtn">Calculate Corpus Needed</button>
+    <button class="btn-reset" id="resetBtn">Reset to Defaults</button>
+  </div>
+
+  <div id="results">
+    <hr style="border:none;border-top:2px solid #e5e7eb;margin:28px 0">
+    <p class="section-title">Summary</p>
+    <div class="summary-grid">
+      <div class="metric"><div class="metric-label">Current Monthly Expense</div><div class="metric-value blue" id="r-now">—</div><div class="metric-sub">Today's total outflow</div></div>
+      <div class="metric"><div class="metric-label">Monthly Expense in Year 5</div><div class="metric-value red" id="r-yr5">—</div><div class="metric-sub">After inflation adjustment</div></div>
+      <div class="metric"><div class="metric-label">Extra Monthly Needed in Yr 5</div><div class="metric-value red" id="r-diff">—</div><div class="metric-sub">vs. today's expense</div></div>
+      <div class="metric"><div class="metric-label">Total Spend (5 Years)</div><div class="metric-value purple" id="r-total5">—</div><div class="metric-sub">Cumulative inflation-adjusted</div></div>
+      <div class="metric"><div class="metric-label">Corpus Needed</div><div class="metric-value green" id="r-corpus">—</div><div class="metric-sub">Lump sum to invest today</div></div>
+      <div class="metric"><div class="metric-label">Monthly SIP to Build Corpus</div><div class="metric-value green" id="r-sip">—</div><div class="metric-sub">At assumed return rate</div></div>
+    </div>
+
+    <p class="section-title">Category-wise: Now vs Year 5</p>
+    <div class="cat-grid" id="catGrid"></div>
+
+    <p class="section-title" style="margin-top:8px">Year-by-Year Projection</p>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Monthly Expense</th>
+            <th>Annual Expense</th>
+            <th>Cumulative Spend</th>
+            <th>Corpus Required</th>
+          </tr>
+        </thead>
+        <tbody id="projBody"></tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <h2>Corpus Building Plan</h2>
+      <div id="sipPlan"></div>
+    </div>
+
+    <div class="note">
+      <strong>How corpus is calculated:</strong> Corpus = Present Value of all future inflation-adjusted annual expenses over 5 years, discounted at your expected investment return. SIP = fixed monthly investment to accumulate that corpus in 60 months. Rent uses its own inflation rate; EMIs are treated as flat. Figures are indicative — consult a financial advisor for personalised planning.
+    </div>
+  </div>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+
+<script>
+  var FIELDS = [
+    { id:'rent',           label:'Rent',                      rentInflation:true  },
+    { id:'electricity',    label:'Electricity & Water'                            },
+    { id:'internet',       label:'Internet + OTT + DTH'                          },
+    { id:'groceries',      label:'Groceries'                                      },
+    { id:'eatout',         label:'Eating Out / Food Delivery'                    },
+    { id:'household',      label:'Household Supplies'                             },
+    { id:'commute',        label:'Commute / Metro / Cab'                         },
+    { id:'fuel',           label:'Vehicle Fuel / Maintenance'                    },
+    { id:'parking',        label:'Parking / Tolls'                               },
+    { id:'healthInsurance',label:'Health Insurance'                               },
+    { id:'medical',        label:'Medical / Pharmacy'                            },
+    { id:'gym',            label:'Gym / Wellness'                                },
+    { id:'clothing',       label:'Clothing & Accessories'                        },
+    { id:'personalCare',   label:'Personal Care / Grooming'                      },
+    { id:'entertainment',  label:'Entertainment / Events'                        },
+    { id:'education',      label:'School / Tuition'                              },
+    { id:'emi',            label:'Loan EMIs',                  flat:true          },
+    { id:'travel',         label:'Travel / Vacation'                             },
+    { id:'dependents',     label:'Parents / Dependents'                          },
+    { id:'misc',           label:'Miscellaneous / Buffer'                        }
+  ];
+
+  var DEFAULTS = {
+    inflationGeneral:6, inflationRent:10, returnRate:12,
+    rent:25000, electricity:2500, internet:1500,
+    groceries:8000, eatout:5000, household:1500,
+    commute:3000, fuel:3000, parking:500,
+    healthInsurance:2000, medical:1500, gym:1500,
+    clothing:3000, personalCare:1500, entertainment:3000,
+    education:5000, emi:10000, travel:4000,
+    dependents:5000, misc:3000
+  };
+
+  function fmtRs(n) {
+    if (n >= 1e7)  return '₹' + (n/1e7).toFixed(2)  + ' Cr';
+    if (n >= 1e5)  return '₹' + (n/1e5).toFixed(2)  + ' L';
+    return '₹' + Math.round(n).toLocaleString('en-IN');
+  }
+
+  function val(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+  // Inflate a monthly amount by n years at rate r (fraction)
+  function inflate(amount, r, n) { return amount * Math.pow(1 + r, n); }
+
+  // PV of a series: sum of PV of each year's annual spend discounted at return rate
+  function corpusNeeded(annualsByYear, r) {
+    var pv = 0;
+    for (var i = 0; i < annualsByYear.length; i++) {
+      pv += annualsByYear[i] / Math.pow(1 + r, i + 1);
+    }
+    return pv;
+  }
+
+  // SIP formula: FV = P * [((1+r)^n - 1) / r] * (1+r)  =>  P = FV * r / [((1+r)^n - 1) * (1+r)]
+  function sipForCorpus(corpus, annualReturn, months) {
+    var r = annualReturn / 12;
+    return corpus * r / ((Math.pow(1 + r, months) - 1) * (1 + r));
+  }
+
+  document.getElementById('calcBtn').addEventListener('click', function () {
+    var gi = val('inflationGeneral') / 100;
+    var ri = val('inflationRent')    / 100;
+    var rr = val('returnRate')       / 100;
+
+    if (gi <= 0 || rr <= 0) { alert('Please enter Inflation and Return Rate values.'); return; }
+
+    var now = FIELDS.reduce(function(s, f) { return s + val(f.id); }, 0);
+    if (now <= 0) { alert('Please enter at least one expense.'); return; }
+
+    // Build year-by-year monthly totals
+    var monthlyByYear = [];
+    for (var y = 1; y <= 5; y++) {
+      var m = FIELDS.reduce(function(s, f) {
+        var v = val(f.id);
+        if (f.flat)          return s + v;
+        if (f.rentInflation) return s + inflate(v, ri, y);
+        return s + inflate(v, gi, y);
+      }, 0);
+      monthlyByYear.push(m);
+    }
+
+    var annualsByYear = monthlyByYear.map(function(m) { return m * 12; });
+    var total5 = annualsByYear.reduce(function(a, b) { return a + b; }, 0);
+    var corpus  = corpusNeeded(annualsByYear, rr);
+    var sip     = sipForCorpus(corpus, rr, 60);
+    var yr5Monthly = monthlyByYear[4];
+
+    document.getElementById('r-now').textContent    = fmtRs(now);
+    document.getElementById('r-yr5').textContent    = fmtRs(yr5Monthly);
+    document.getElementById('r-diff').textContent   = fmtRs(yr5Monthly - now);
+    document.getElementById('r-total5').textContent = fmtRs(total5);
+    document.getElementById('r-corpus').textContent = fmtRs(corpus);
+    document.getElementById('r-sip').textContent    = fmtRs(sip);
+
+    // Category grid
+    var catHtml = '';
+    FIELDS.forEach(function(f) {
+      var cur = val(f.id); if (!cur) return;
+      var future = f.flat ? cur : inflate(cur, f.rentInflation ? ri : gi, 5);
+      var pct = Math.round((future - cur) / cur * 100);
+      catHtml += '<div class="cat-row">'
+        + '<span class="cat-name">' + f.label + '</span>'
+        + '<span class="cat-5yr">' + fmtRs(future) + ' <small style="color:#8b949e;font-weight:400">(+' + pct + '%)</small></span>'
+        + '</div>';
+    });
+    document.getElementById('catGrid').innerHTML = catHtml;
+
+    // Projection table
+    var tbodyHtml = '';
+    var cumulative = 0;
+    for (var y = 0; y < 5; y++) {
+      cumulative += annualsByYear[y];
+      var corpY = corpusNeeded(annualsByYear.slice(y), rr);
+      tbodyHtml += '<tr>'
+        + '<td>Year ' + (y+1) + '</td>'
+        + '<td>' + fmtRs(monthlyByYear[y]) + '</td>'
+        + '<td>' + fmtRs(annualsByYear[y]) + '</td>'
+        + '<td>' + fmtRs(cumulative) + '</td>'
+        + '<td>' + fmtRs(corpY) + '</td>'
+        + '</tr>';
+    }
+    document.getElementById('projBody').innerHTML = tbodyHtml;
+
+    // SIP plan card
+    var pct10 = sipForCorpus(corpus, rr, 120);
+    document.getElementById('sipPlan').innerHTML =
+      '<div class="summary-grid" style="grid-template-columns:1fr 1fr 1fr">'
+      + '<div class="metric"><div class="metric-label">Corpus Needed</div><div class="metric-value green">' + fmtRs(corpus) + '</div><div class="metric-sub">PV of 5-yr expenses</div></div>'
+      + '<div class="metric"><div class="metric-label">SIP (5 yr / 60 mo)</div><div class="metric-value blue">' + fmtRs(sip) + '/mo</div><div class="metric-sub">To accumulate corpus</div></div>'
+      + '<div class="metric"><div class="metric-label">SIP (10 yr / 120 mo)</div><div class="metric-value purple">' + fmtRs(pct10) + '/mo</div><div class="metric-sub">Lower monthly, longer horizon</div></div>'
+      + '</div>';
+
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    Object.keys(DEFAULTS).forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.value = DEFAULTS[id];
+    });
+    document.getElementById('results').style.display = 'none';
+  });
+
+  // Load defaults on page init
+  (function () {
+    Object.keys(DEFAULTS).forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.value = DEFAULTS[id];
+    });
+  })();
+</script>
+
+</body></html>
