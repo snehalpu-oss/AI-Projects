@@ -1,0 +1,457 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EPFO PF Contribution Calculator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    background: #ffffff;
+    color: #1f2328;
+  }
+
+  .wrapper {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 20px 48px;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2328;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #57606a;
+    margin-bottom: 28px;
+  }
+
+  /* ── Form card ── */
+  .card {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .card h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #57606a;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 4px; }
+
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #57606a;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  input[type="number"], select {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #1f2328;
+    outline: none;
+  }
+
+  input[type="number"]:focus, select:focus {
+    border-color: #3b82d4;
+    box-shadow: 0 0 0 3px rgba(59,130,212,.12);
+  }
+
+  .hint {
+    font-size: 11px;
+    color: #57606a;
+  }
+
+  .btn {
+    margin-top: 20px;
+    padding: 10px 24px;
+    background: #3b82d4;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-secondary {
+    margin-top: 20px;
+    margin-left: 10px;
+    padding: 10px 20px;
+    background: #ffffff;
+    color: #57606a;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  /* ── Results ── */
+  #results { display: none; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .metric {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: #57606a;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 4px;
+  }
+
+  .metric-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2328;
+  }
+
+  .metric-value.accent { color: #3b82d4; }
+  .metric-value.green  { color: #1a7f37; }
+  .metric-value.purple { color: #7c5cd8; }
+
+  /* ── Breakdown table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead th {
+    background: #f7f8fa;
+    color: #57606a;
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid #e5e7eb;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  thead th:last-child { text-align: right; }
+
+  tbody tr:nth-child(even) { background: #fafbfc; }
+
+  tbody td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #1f2328;
+  }
+
+  tbody td:last-child { text-align: right; font-weight: 600; }
+
+  .row-section td {
+    background: #f0f4fc;
+    font-weight: 700;
+    font-size: 12px;
+    color: #3b82d4;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    padding: 6px 12px;
+    border-bottom: none;
+  }
+
+  .total-row td {
+    border-top: 2px solid #e5e7eb;
+    font-weight: 700;
+    font-size: 14px;
+    background: #f7f8fa;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .badge-blue   { background: #dbeafe; color: #1e40af; }
+  .badge-green  { background: #dcfce7; color: #166534; }
+  .badge-purple { background: #ede9fe; color: #6b21a8; }
+
+  /* ── Note box ── */
+  .note {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #92400e;
+    margin-top: 16px;
+  }
+
+  .note strong { color: #78350f; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 24px 0;
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: #57606a;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 16px;
+    margin-top: 40px;
+  }
+
+  @media (max-width: 540px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <h1>EPFO PF Contribution Calculator</h1>
+  <p class="subtitle">Computes monthly EPF, EPS, and employer contributions as per Indian PF Act. Rates updated as per EPFO 2024 guidelines.</p>
+
+  
+  <div class="card">
+    <h2>Employee Details</h2>
+    <div class="grid-2">
+      <div class="field">
+        <label>Basic Salary + DA (₹/month)</label>
+        <input type="number" id="basicSalary" />
+        <span class="hint">PF is calculated on Basic + DA component</span>
+      </div>
+      <div class="field">
+        <label>HRA (₹/month)</label>
+        <input type="number" id="hra" />
+        <span class="hint">House Rent Allowance — excluded from PF</span>
+      </div>
+      <div class="field">
+        <label>Special Allowance (₹/month)</label>
+        <input type="number" id="specialAllowance" />
+        <span class="hint">Excluded from PF base by default</span>
+      </div>
+      <div class="field">
+        <label>Other Allowances (₹/month)</label>
+        <input type="number" id="otherAllowances" />
+        <span class="hint">Travel, food, medical, etc.</span>
+      </div>
+      <div class="field">
+        <label>Professional Tax (₹/month)</label>
+        <input type="number" id="professionalTax" />
+        <span class="hint">Varies by state; typically ₹200</span>
+      </div>
+      <div class="field">
+        <label>PF Wage Cap</label>
+        <select id="pfCap">
+          <option>Actual Basic (no cap)</option>
+          <option>Capped at ₹15,000 (statutory)</option>
+        </select>
+        <span class="hint">Statutory cap is ₹15,000 for EPS contribution</span>
+      </div>
+    </div>
+    <div>
+      <button class="btn" id="calcBtn">Calculate</button>
+      <button class="btn-secondary" id="resetBtn">Reset</button>
+    </div>
+  </div>
+
+  
+  <div id="results">
+
+    
+    <div class="summary-grid">
+      <div class="metric">
+        <div class="metric-label">Gross Salary</div>
+        <div class="metric-value" id="r-gross">—</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Total Deductions</div>
+        <div class="metric-value accent" id="r-deductions">—</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Net Take-Home</div>
+        <div class="metric-value green" id="r-takehome">—</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Employee PF (EPF)</div>
+        <div class="metric-value" id="r-empepf">—</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Employer's Total PF Cost</div>
+        <div class="metric-value purple" id="r-ercost">—</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">CTC (Monthly)</div>
+        <div class="metric-value" id="r-ctc">—</div>
+      </div>
+    </div>
+
+    
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:55%">Component</th>
+            <th>Rate / Rule</th>
+            <th>Amount (₹/month)</th>
+          </tr>
+        </thead>
+        <tbody id="breakdownBody"></tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <strong>Disclaimer:</strong> EPS contribution is capped on ₹15,000 pensionable salary (8.33% = ₹1,250 max). 
+      If Basic &gt; ₹15,000, the statutory EPS is ₹1,250 and the remaining employer 12% goes to EPF Diff A/c. 
+      EDLI (0.5%) and Admin charges (0.5% EPF + 0.01% EDLI) are borne by employer only. 
+      Figures are indicative; consult your payroll or HR for exact statutory amounts.
+    </div>
+
+  </div>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+
+
+<script>
+  function fmt(n) {
+    return '₹' + Math.round(n).toLocaleString('en-IN');
+  }
+
+  function row(label, badge, rate, amount, cls) {
+    var badgeHtml = badge ? '<span class="badge badge-' + badge[0] + '">' + badge[1] + '</span>' : '';
+    return '<tr' + (cls ? ' class="' + cls + '"' : '') + '>'
+      + '<td>' + label + badgeHtml + '</td>'
+      + '<td>' + rate + '</td>'
+      + '<td>' + fmt(amount) + '</td>'
+      + '</tr>';
+  }
+
+  function sectionRow(label) {
+    return '<tr class="row-section"><td colspan="3">' + label + '</td></tr>';
+  }
+
+  document.getElementById('calcBtn').addEventListener('click', function () {
+    var basic   = parseFloat(document.getElementById('basicSalary').value)       || 0;
+    var hra     = parseFloat(document.getElementById('hra').value)               || 0;
+    var special = parseFloat(document.getElementById('specialAllowance').value)  || 0;
+    var other   = parseFloat(document.getElementById('otherAllowances').value)   || 0;
+    var pt      = parseFloat(document.getElementById('professionalTax').value)   || 0;
+    var capped  = document.getElementById('pfCap').value.indexOf('15,000') !== -1;
+
+    if (basic <= 0) {
+      alert('Please enter Basic Salary + DA.');
+      return;
+    }
+
+    var pfWage  = capped ? Math.min(basic, 15000) : basic;
+    var gross   = basic + hra + special + other;
+
+    // Employee contributions
+    var empEPF  = pfWage * 0.12;
+
+    // Employer contributions
+    var epsWage = Math.min(pfWage, 15000);
+    var eps     = epsWage * 0.0833;           // 8.33% capped at ₹1,250
+    var erEPF   = (pfWage * 0.12) - eps;     // EPF diff a/c
+    var edli    = pfWage * 0.005;            // 0.50%
+    var adminEPF = pfWage * 0.005;           // 0.50% EPF admin
+    var adminEDLI = pfWage * 0.0001;         // 0.01% EDLI admin
+    var erTotal = eps + erEPF + edli + adminEPF + adminEDLI;
+
+    var totalDeductions = empEPF + pt;
+    var takeHome = gross - totalDeductions;
+    var ctc = gross + erTotal;
+
+    // Update metrics
+    document.getElementById('r-gross').textContent       = fmt(gross);
+    document.getElementById('r-deductions').textContent  = fmt(totalDeductions);
+    document.getElementById('r-takehome').textContent    = fmt(takeHome);
+    document.getElementById('r-empepf').textContent      = fmt(empEPF);
+    document.getElementById('r-ercost').textContent      = fmt(erTotal);
+    document.getElementById('r-ctc').textContent         = fmt(ctc);
+
+    // Build breakdown table
+    var html = '';
+
+    html += sectionRow('Salary Components');
+    html += row('Basic Salary + DA', ['blue','PF Base'],   'Actual input',     basic);
+    html += row('HRA',               ['',''],               'Excluded from PF', hra);
+    html += row('Special Allowance', ['',''],               'Excluded from PF', special);
+    html += row('Other Allowances',  ['',''],               'Excluded from PF', other);
+    html += '<tr class="total-row"><td><strong>Gross Salary</strong></td><td></td><td>' + fmt(gross) + '</td></tr>';
+
+    html += sectionRow('Employee Deductions');
+    html += row('Employee EPF (12%)',   ['blue','EPF'],  '12% of PF Wage',      empEPF);
+    html += row('Professional Tax',     ['',''],         'State levy',          pt);
+    html += '<tr class="total-row"><td><strong>Total Deductions</strong></td><td></td><td>' + fmt(totalDeductions) + '</td></tr>';
+    html += '<tr class="total-row"><td><strong>Net Take-Home</strong></td><td></td><td>' + fmt(takeHome) + '</td></tr>';
+
+    html += sectionRow('Employer Contributions (not deducted from salary)');
+    html += row('Employer EPS (8.33%)',     ['purple','EPS'],   'Max ₹15,000 wage cap',  eps);
+    html += row('Employer EPF Diff A/c',    ['blue','EPF'],     '12% − EPS',              erEPF);
+    html += row('EDLI Contribution (0.5%)', ['green','EDLI'],   'Insurance fund',         edli);
+    html += row('EPF Admin Charge (0.5%)',  ['',''],            'Admin cost',             adminEPF);
+    html += row('EDLI Admin Charge (0.01%)','','',              adminEDLI);
+    html += '<tr class="total-row"><td><strong>Employer Total Cost</strong></td><td></td><td>' + fmt(erTotal) + '</td></tr>';
+    html += '<tr class="total-row"><td><strong>CTC (Monthly)</strong></td><td></td><td>' + fmt(ctc) + '</td></tr>';
+
+    document.getElementById('breakdownBody').innerHTML = html;
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    ['basicSalary','hra','specialAllowance','otherAllowances','professionalTax'].forEach(function(id){
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('pfCap').selectedIndex = 0;
+    document.getElementById('results').style.display = 'none';
+  });
+</script>
+
+</body>
+</html>
